@@ -1,81 +1,257 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import type { InputHTMLAttributes } from "react";
 
-export type ButtonVariant =
-  | "primary"
-  | "secondary"
-  | "outline"
-  | "danger";
-
-export type ButtonSize =
-  | "sm"
-  | "md"
-  | "lg";
-
-export interface ButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: ButtonVariant;
-  size?: ButtonSize;
-  loading?: boolean;
+export interface InputProps
+  extends InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  error?: string;
+  helperText?: string;
   fullWidth?: boolean;
-  leftIcon?: ReactNode;
-  rightIcon?: ReactNode;
 }
 
-      import type { ButtonProps } from "./button.types";
 
-const variantClasses = {
-  primary:
-    "bg-blue-600 text-white hover:bg-blue-700",
 
-  secondary:
-    "bg-gray-600 text-white hover:bg-gray-700",
+    import type { InputProps } from "./input.types";
 
-  outline:
-    "border border-gray-300 bg-white hover:bg-gray-100",
-
-  danger:
-    "bg-red-600 text-white hover:bg-red-700",
-};
-
-const sizeClasses = {
-  sm: "px-3 py-1.5 text-sm",
-  md: "px-4 py-2",
-  lg: "px-6 py-3 text-lg",
-};
-
-const Button = ({
-  children,
-  variant = "primary",
-  size = "md",
-  loading = false,
-  fullWidth = false,
-  leftIcon,
-  rightIcon,
+const Input = ({
+  label,
+  error,
+  helperText,
+  fullWidth = true,
   className = "",
-  disabled,
+  id,
   ...props
-}: ButtonProps) => {
+}: InputProps) => {
   return (
-    <button
-      className={`
-        inline-flex items-center justify-center gap-2 rounded-md
-        font-medium transition-colors duration-200
-        disabled:cursor-not-allowed disabled:opacity-50
-        ${variantClasses[variant]}
-        ${sizeClasses[size]}
-        ${fullWidth ? "w-full" : ""}
-        ${className}
-      `}
-      disabled={loading || disabled}
-      {...props}
-    >
-      {!loading && leftIcon}
+    <div className={fullWidth ? "w-full" : ""}>
+      {label && (
+        <label
+          htmlFor={id}
+          className="mb-1 block text-sm font-medium text-gray-700"
+        >
+          {label}
+        </label>
+      )}
 
-      {loading ? "Loading..." : children}
+      <input
+        id={id}
+        className={`
+          w-full rounded-md border px-3 py-2
+          outline-none
+          transition-colors
+          focus:border-blue-500
+          focus:ring-2
+          focus:ring-blue-200
+          ${
+            error
+              ? "border-red-500"
+              : "border-gray-300"
+          }
+          ${className}
+        `}
+        {...props}
+      />
 
-      {!loading && rightIcon}
-    </button>
+      {error ? (
+        <p className="mt-1 text-sm text-red-600">
+          {error}
+        </p>
+      ) : helperText ? (
+        <p className="mt-1 text-sm text-gray-500">
+          {helperText}
+        </p>
+      ) : null}
+    </div>
   );
 };
 
-export default Button;
+
+    export { default as Input } from "./Input";
+export type * from "./input.types";
+export default Input;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    import type { SelectHTMLAttributes } from "react";
+
+export interface SelectOption {
+  label: string;
+  value: string;
+}
+
+export interface SelectProps
+  extends SelectHTMLAttributes<HTMLSelectElement> {
+  label?: string;
+  error?: string;
+  helperText?: string;
+  options: SelectOption[];
+  placeholder?: string;
+  fullWidth?: boolean;
+}
+
+
+
+
+
+
+
+
+    import type { SelectProps } from "./select.types";
+
+const Select = ({
+  label,
+  error,
+  helperText,
+  options,
+  placeholder,
+  fullWidth = true,
+  className = "",
+  id,
+  ...props
+}: SelectProps) => {
+  return (
+    <div className={fullWidth ? "w-full" : ""}>
+      {label && (
+        <label
+          htmlFor={id}
+          className="mb-1 block text-sm font-medium text-gray-700"
+        >
+          {label}
+        </label>
+      )}
+
+      <select
+        id={id}
+        className={`
+          w-full rounded-md border px-3 py-2
+          outline-none transition-colors
+          focus:border-blue-500
+          focus:ring-2
+          focus:ring-blue-200
+          ${
+            error
+              ? "border-red-500"
+              : "border-gray-300"
+          }
+          ${className}
+        `}
+        {...props}
+      >
+        {placeholder && (
+          <option value="">
+            {placeholder}
+          </option>
+        )}
+
+        {options.map((option) => (
+          <option
+            key={option.value}
+            value={option.value}
+          >
+            {option.label}
+          </option>
+        ))}
+      </select>
+
+      {error ? (
+        <p className="mt-1 text-sm text-red-600">
+          {error}
+        </p>
+      ) : helperText ? (
+        <p className="mt-1 text-sm text-gray-500">
+          {helperText}
+        </p>
+      ) : null}
+    </div>
+  );
+};
+
+export default Select;
+
+    export { default as Select } from "./Select";
+export type * from "./select.types";
+
+
+
+
+
+
+
+
+
+    import type { HTMLAttributes, ReactNode } from "react";
+
+export interface CardProps extends HTMLAttributes<HTMLDivElement> {
+  title?: string;
+  subtitle?: string;
+  footer?: ReactNode;
+  children: ReactNode;
+}
+
+
+
+  import type { CardProps } from "./card.types";
+
+const Card = ({
+  title,
+  subtitle,
+  footer,
+  children,
+  className = "",
+  ...props
+}: CardProps) => {
+  return (
+    <div
+      className={`
+        rounded-lg border border-gray-200
+        bg-white shadow-sm
+        ${className}
+      `}
+      {...props}
+    >
+      {(title || subtitle) && (
+        <div className="border-b border-gray-200 px-6 py-4">
+          {title && (
+            <h2 className="text-lg font-semibold text-gray-900">
+              {title}
+            </h2>
+          )}
+
+          {subtitle && (
+            <p className="mt-1 text-sm text-gray-500">
+              {subtitle}
+            </p>
+          )}
+        </div>
+      )}
+
+      <div className="p-6">
+        {children}
+      </div>
+
+      {footer && (
+        <div className="border-t border-gray-200 px-6 py-4">
+          {footer}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Card;
+
+  export { default as Card } from "./Card";
+export type * from "./card.types";
