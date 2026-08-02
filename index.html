@@ -1,5 +1,5 @@
 import { apiClient } from "@/api/client";
-import { API_ENDPOINTS } from "@/api/endpoints";
+import { ENDPOINTS } from "@/api/endpoints";
 
 import type {
   CreatePostDto,
@@ -12,12 +12,9 @@ import type {
 export const getPosts = async (
   params?: GetPostsParamsDto
 ): Promise<PostsResponseDto> => {
-  const { data } = await apiClient.get<PostsResponseDto>(
-    API_ENDPOINTS.POSTS,
-    {
-      params,
-    }
-  );
+  const { data } = await apiClient.get(ENDPOINTS.POSTS.LIST, {
+    params,
+  });
 
   return data;
 };
@@ -25,8 +22,8 @@ export const getPosts = async (
 export const getPostById = async (
   postId: number
 ): Promise<PostDto> => {
-  const { data } = await apiClient.get<PostDto>(
-    API_ENDPOINTS.POST_DETAILS(postId)
+  const { data } = await apiClient.get(
+    ENDPOINTS.POSTS.DETAILS(postId)
   );
 
   return data;
@@ -35,8 +32,8 @@ export const getPostById = async (
 export const createPost = async (
   payload: CreatePostDto
 ): Promise<PostDto> => {
-  const { data } = await apiClient.post<PostDto>(
-    API_ENDPOINTS.POSTS,
+  const { data } = await apiClient.post(
+    ENDPOINTS.POSTS.ADD,
     payload
   );
 
@@ -47,8 +44,8 @@ export const updatePost = async (
   postId: number,
   payload: UpdatePostDto
 ): Promise<PostDto> => {
-  const { data } = await apiClient.put<PostDto>(
-    API_ENDPOINTS.POST_DETAILS(postId),
+  const { data } = await apiClient.put(
+    ENDPOINTS.POSTS.UPDATE(postId),
     payload
   );
 
@@ -58,5 +55,7 @@ export const updatePost = async (
 export const deletePost = async (
   postId: number
 ): Promise<void> => {
-  await apiClient.delete(API_ENDPOINTS.POST_DETAILS(postId));
+  await apiClient.delete(
+    ENDPOINTS.POSTS.DELETE(postId)
+  );
 };
