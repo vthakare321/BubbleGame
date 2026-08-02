@@ -1,78 +1,62 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { apiClient } from "@/api/client";
+import { API_ENDPOINTS } from "@/api/endpoints";
 
-import { ROLES } from "@/constants";
-import { Button, Card, Select } from "@/shared/components";
+import type {
+  CreatePostDto,
+  GetPostsParamsDto,
+  PostDto,
+  PostsResponseDto,
+  UpdatePostDto,
+} from "../dto";
 
-import { useLogin } from "../hooks/useLogin";
-import {
-  loginSchema,
-  type LoginFormValues,
-} from "../validation/login.schema";
-
-const LoginPage = () => {
-  const { mutate, isPending } = useLogin();
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      role: undefined,
-    },
-  });
-
-  const onSubmit = (data: LoginFormValues) => {
-    mutate(data);
-  };
-
-  const roleOptions = [
+export const getPosts = async (
+  params?: GetPostsParamsDto
+): Promise<PostsResponseDto> => {
+  const { data } = await apiClient.get<PostsResponseDto>(
+    API_ENDPOINTS.POSTS,
     {
-      label: "Content Manager",
-      value: ROLES.CONTENT_MANAGER,
-    },
-    {
-      label: "Reviewer",
-      value: ROLES.REVIEWER,
-    },
-    {
-      label: "Reader",
-      value: ROLES.READER,
-    },
-  ];
-
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4">
-      <Card
-        title="Content Review Workspace"
-        className="w-full max-w-md"
-      >
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-5"
-        >
-          <Select
-            id="role"
-            label="Select Role"
-            placeholder="Select a role"
-            options={roleOptions}
-            error={errors.role?.message}
-            {...register("role")}
-          />
-
-          <Button
-            type="submit"
-            disabled={isPending}
-            fullWidth
-          >
-            {isPending ? "Logging in..." : "Login"}
-          </Button>
-        </form>
-      </Card>
-    </div>
+      params,
+    }
   );
+
+  return data;
 };
 
-export default LoginPage;
+export const getPostById = async (
+  postId: number
+): Promise<PostDto> => {
+  const { data } = await apiClient.get<PostDto>(
+    API_ENDPOINTS.POST_DETAILS(postId)
+  );
+
+  return data;
+};
+
+export const createPost = async (
+  payload: CreatePostDto
+): Promise<PostDto> => {
+  const { data } = await apiClient.post<PostDto>(
+    API_ENDPOINTS.POSTS,
+    payload
+  );
+
+  return data;
+};
+
+export const updatePost = async (
+  postId: number,
+  payload: UpdatePostDto
+): Promise<PostDto> => {
+  const { data } = await apiClient.put<PostDto>(
+    API_ENDPOINTS.POST_DETAILS(postId),
+    payload
+  );
+
+  return data;
+};
+
+export const deletePost = async (
+  postId: number
+): Promise<void> => {
+  await apiClient.delete(API_ENDPOINTS.POST_DETAILS(postId));
+};
